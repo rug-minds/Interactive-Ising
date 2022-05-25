@@ -7,18 +7,12 @@ function updateMonteCarlo(state::Vector{Int8},cd::Dict{Int32,Vector{Int32}}, T, 
   
     # Why does this only work correctly if it is threaded?
     it::UnitRange{Int32} = 1:length(oldstate)
-    Threads.@threads for idx in it
-    # for idx in it
-        
+    for idx in it        
         if rand() > 0.5
             continue
         end
         
-        Estate = 0
-        
-        for jdx in cd[idx]
-            Estate += -J*oldstate[jdx]*oldstate[jdx]
-        end
+        Estate = getH(g,idx)
         
         if (Estate >= 0 || rand() < exp(2*beta*Estate))
                 state[idx] *= -1

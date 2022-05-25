@@ -4,21 +4,27 @@ ENV["QSG_RENDER_LOOP"] = "basic"
 using LinearAlgebra, Distributions, Random, GLMakie, FileIO, QML, Observables, ColorSchemes, Images, DataFrames, CSV, CxxWrap
 using BenchmarkTools
 import Plots as pl
-#using Qt5QuickControls_jll, Qt5QuickControls2_jll,
+
+# Add files
+include("CreateFunc.jl")
+import .CreateFunc as cf
 
 include("ising_graph.jl")
-
 include("ising_update.jl")
 include("square_adj.jl")
 include("plotting.jl")
 include("interaction.jl")
 include("analysis.jl")
 
+
+#using Qt5QuickControls_jll, Qt5QuickControls2_jll,
+
+
 qmlfile = joinpath(dirname(Base.source_path()), "qml", "Ising.qml")
 
 # Observables & global variables
 running = Observable(true) #not used right now, for closing background processes
-NIs = Observable(512) #Graph size
+NIs = Observable(3) #Graph size
 TIs = Observable(1.0) #temperature
 JIs = Observable(1.0) #interaction strength
 pDefects = Observable(0) #percentage of defects to be added
@@ -136,10 +142,13 @@ function showlatest(buffer::Array{UInt32, 1}, width32::Int32, height32::Int32)
 showlatest_cfunction = CxxWrap.@safe_cfunction(showlatest, Cvoid, (Array{UInt32,1}, Int32, Int32))
 
 # Start Simulation
-startSim()
+# startSim()
 
-loadqml( qmlfile, obs =  pmap, showlatest = showlatest_cfunction); exec_async()
+
 # loadqml( qmlfile, obs =  pmap, showlatest = showlatest_cfunction); exec() #doesn't work for some reason
+
+# loadqml( qmlfile, obs =  pmap, showlatest = showlatest_cfunction); exec_async()
+
 
 
 

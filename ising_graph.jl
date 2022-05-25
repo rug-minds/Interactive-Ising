@@ -4,7 +4,9 @@ mutable struct IsingGraph
     N::Int32
     size::Int32
     state::Vector{Int8}
-    adj::Dict{Int32,Vector{Int32}}
+    # For coupling function
+    adj::Dict{Int32,Vector{Tuple{Int32,Float32,Function}}}
+    hFuncs::Vector{Function}
     # For tracking defects
     aliveList::Vector{Int32}
     defects::Bool
@@ -15,8 +17,12 @@ end
 """
 INITIALIZERS
 """
+
+# Standard ising coupling function
+hIsing(state1,state2,j) = -j*state1*state2
+
 # Initialize without defects
-IsingGraph(a,b,c,d) = IsingGraph(a,b,c,d,[1:b;], false ,[false for x in 1:b],[])
+IsingGraph(a,b,c,d) = IsingGraph(a,b,c,d,[hIsing],[1:b;], false ,[false for x in 1:b],[])
 
 #Initialization using only N
 IsingGraph(N::Int) = IsingGraph(N,N*N,initRandomState(N),initAdj(N))
@@ -27,7 +33,7 @@ IsingGraph(state::Vector{Int8},adj::Dict{Int32,Vector{Int32}}) = let size = leng
 end
 
 # Copy graph data to new one
-IsingGraph(g::IsingGraph) = IsingGraph(g.N,g.size,copy(g.state),copy(g.adj),copy(g.aliveList),copy(g.defects),copy(g.defectBools),copy(g.defectList))
+IsingGraph(g::IsingGraph) = deepcopy(g)
 
 function reInitGraph!(g::IsingGraph)
     println("Reinitializing graph")
@@ -38,9 +44,6 @@ function reInitGraph!(g::IsingGraph)
     g.defectList = []
 end
 
-"""
-Methods
-"""
 # Matrix Coordinates to vector Coordinates
 function coordToIdx(i,j,N)
     return (i-1)*N+j
@@ -49,6 +52,11 @@ end
 function idxToCoord(idx,N)
     return ((idx-1)÷N+1,(idx-1)%N+1)
 end
+
+"""
+Methods
+"""
+
 
 # coordToIdxMatrix(N)
 #     matr = [[]]
@@ -62,8 +70,8 @@ end
 
 # Initialization of adjacency matrix for a given ND
 function initAdj(N)
-    adj = Dict{Int32,Vector{Int32}}()
-    fillAdjList!(adj,N)
+    adj = Dict{Int32,Vector{Tuple{Int32,Float32,Function}}}()
+    fillAdjList!(adj,N, hIsing)
     return adj
 end
 
@@ -80,6 +88,9 @@ function ising_it(g::IsingGraph)
     end
 
 end
+
+# Add a function to the model
+
 
 """ Setting Elements and defects """
 
@@ -203,3 +214,17 @@ function revRemoveSpin!(list,spin_idx)
     end
 end
 
+# Get energy of state with idx 
+function getH(g,idx)
+    H = 0
+    state1 = g.state[idx]
+    for tup in g.adj[idx]
+        c_idx = tup[1]
+        if !g.defectBools[c_idx]
+            state2 = g.state[c_idx]
+            println("For state $c_idx, $(tup[3](state1,state2,tup[2]))")
+            H += tup[3](state1,state2,tup[2])
+        end
+    end
+    return H
+end
