@@ -65,7 +65,7 @@ mutable struct Sim
 
     # Image of graph
     const img::Base.RefValue{Matrix{RGB{Float64}}}
-    const imgSize::Observable
+    const imgSize::Observable{Integer}
 
     # Thread Locking
     const updatingUpf::Ref{Bool}
@@ -114,7 +114,7 @@ mutable struct Sim
             Observable(0),
             img,
             # Ref(initImg),
-            Observable(size(initImg)),
+            Observable(size(initImg)[1]),
             Ref(false),
             Ref(false),
             Ref(false),
@@ -213,7 +213,7 @@ function updateGraph(sim::Sim)
         end
 
         function updateMonteCarloIsingC!()
-
+            T = TIs[]
             @inline function deltE(efac,newstate,oldstate)
                 return efac*(newstate-oldstate)
             end
@@ -352,6 +352,7 @@ function qmlFunctions(sim::Sim)
     M_array = sim.M_array
     M = sim.M
     brushR = sim.brushR
+    imgSize = sim.imgSize
 
     # Locks
     updatingImg = sim.updatingImg
@@ -381,7 +382,7 @@ function qmlFunctions(sim::Sim)
     end
     @qmlfunction initIsing
     # Draw circle to state
-    circleToStateQML(i,j,clamp=false) = Threads.@spawn circleToState(g,circ[],i,j,brush[]; clamp, imgsize = size(img[])[1])
+    circleToStateQML(i,j,clamp=false) = Threads.@spawn circleToState(g,circ[],i,j,brush[]; clamp, imgsize = imgSize[])
     @qmlfunction circleToStateQML
 
     # Sweep temperatures and record magnetization and correlation lengths

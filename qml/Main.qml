@@ -10,10 +10,10 @@ import "TSweepWindow"
 ApplicationWindow {
   id: root
   title: "Ising Simulation"
-  width: canvas.width + 256
-  height: canvas.height + 256
-  // width: 712
-  // height: 712
+  // width: canvas.width + 256
+  // height: canvas.height + 256
+  width: 512 + 256
+  height: 512 + 256
   visible: true
 
   // UPS Counter
@@ -37,76 +37,71 @@ ApplicationWindow {
     }
   }
 
+  TopPanel{
+    id: toppanel
+    // Layout.alignment: Qt.AlignHCenter
+    anchors.top: parent.top
+    anchors.horizontalCenter: parent.horizontalCenter
+  }
 
-
-  // Whole application in a column
-  // Screen stuff above, panels and text under
-  ColumnLayout{
-    // anchors.fill: parent
+  JuliaCanvas{
+    // Layout.alignment: Qt.AlignCenter
     anchors.centerIn: parent
-    spacing: 32
+    id: canvas
+    height: obs.imgSize
+    width: obs.imgSize
+    // width: {
+    //   if(obs.gSize > 500)
+    //   {
+    //     return obs.gSize
+    //   }
+    //   else
+    //   {
+    //     return ob
+    //   }
+    // }
+    // height: {
+    //   if(obs.gSize > 500)
+    //   {
+    //     return obs.gSize
+    //   }
+    //   else
+    //   {
+    //     return 500
+    //   }
+    // }
 
-    TopPanel{
-      Layout.alignment: Qt.AlignHCenter
-    }
+    paintFunction: showlatest
 
-    // Middle row
-    // Brush - Screen - Temperature
-    RowLayout{
-      spacing: 6
-      Layout.alignment: Qt.AlignHCenter
-
-      BrushPanel{
-        id: bpanel
-        Layout.alignment: Qt.AlignVCenter
-      }
-
-
-      JuliaCanvas{
-        Layout.alignment: Qt.AlignCenter
-        id: canvas
-        // height: 500
-        // width: 500
-        width: {
-          if(obs.gSize > 500)
-          {
-            return obs.gSize
-          }
-          else
-          {
-            return 500
-          }
-        }
-        height: {
-          if(obs.gSize > 500)
-          {
-            return obs.gSize
-          }
-          else
-          {
-            return 500
-          }
-        }
-
-        paintFunction: showlatest
-
-        MouseArea{
-          anchors.fill: parent
-          onClicked: {
-            Julia.circleToStateQML(mouseY, mouseX, bpanel.clamp)
-          }
-        }
-
-      }
-
-      TempSlider{
-        Layout.alignment: Qt.AlignCenter
+    MouseArea{
+      anchors.fill: parent
+      onClicked: {
+        Julia.circleToStateQML(mouseY, mouseX, bpanel.clamp)
       }
     }
 
-    BottomPanel{
-      Layout.alignment: Qt.AlignCenter
-    }
+  }
+
+  BrushPanel{
+    id: bpanel
+    anchors.left: parent.left
+    anchors.verticalCenter: canvas.verticalCenter
+    anchors.margins: 32
+    // Layout.alignment: Qt.AlignVCenter
+  }
+
+  TempSlider{
+    anchors.margins: 32
+
+    anchors.right: parent.right
+    anchors.verticalCenter: canvas.verticalCenter
+    // Layout.alignment: Qt.AlignCenter
+  }
+  BottomPanel{
+    anchors.margins: 32
+    anchors.bottom: parent.bottom
+    anchors.horizontalCenter: parent.horizontalCenter
+    // Layout.alignment: Qt.AlignCenter
   }
 
 

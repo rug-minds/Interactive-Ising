@@ -5,7 +5,7 @@ push!(LOAD_PATH, pwd())
 
 using IsingGraphs, MLDatasets
 
-export read_idx, clampIm, mnist_im, mnist_lab
+export read_idx, clampImg, mnist_im, mnist_lab
 
 # const idx_types = [(UInt8, 0x08), (Int8, 0x09), (Int16, 0x0B), (Int32, 0x0C), (Float32, 0x0D), (Float64, 0x0E)]
 # const typefromcode = Dict(idx_types)
@@ -55,7 +55,7 @@ end
 
 # Groupsize should be odd?
 # Crange: Clamp range
-function clampIm(g::IsingGraph{Float32}, num::Integer,groupsize=5; crange = (0,1))
+function clampImg(g::IsingGraph{Float32}, num::Integer,groupsize=5; crange = (0,1))
   while groupsize*28 > g.N || iseven(groupsize) && groupsize > 0
     groupsize -= 1
   end

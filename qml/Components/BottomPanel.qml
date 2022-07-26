@@ -10,6 +10,7 @@ import "../TSweepWindow"
 // Inserting Defects
 // Magnetization
 ColumnLayout{
+  Layout.alignment: Qt.AlignHCenter
   spacing: 2
 
   // Defects textfield & Button

@@ -11,17 +11,18 @@ using IsingMetropolis
 using WeightFuncs
 using Analysis
 using Distributions
+using IsingLearning
 
 include("WeightFuncsCustom.jl")
 
-weightFunc = defaultIsingWF
-setAddDist!(weightFunc, Normal(0,0.3))
+weightFunc = isingNN2
+# setAddDist!(weightFunc, Normal(0,0.1))
 
 const sim = Sim(
-    continuous = false, 
-    graphSize = 512, 
+    continuous = true, 
+    graphSize = 84, 
     weighted = true;
     weightFunc
     )
 
-g = sim(true)
+g = sim(true);

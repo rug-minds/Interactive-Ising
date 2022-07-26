@@ -42,10 +42,12 @@ RowLayout{
                 obs.brush = -1
             }
         }
-
-        Switch{
+        Text{
             Layout.alignment: Qt.AlignHCenter
             text: qsTr("Clamp")
+        }
+        Switch{
+            Layout.alignment: Qt.AlignHCenter
             checked: clamp
             onCheckedChanged: {
                 clamp = !clamp
@@ -56,16 +58,24 @@ RowLayout{
     // Radius Slider
     ColumnLayout{
         Text{
-            text: "Radius \n" + rSlider.value
+            Layout.alignment: Qt.AlignHCenter
+            text: "Radius"
+        }
+        Text{
+            Layout.alignment: Qt.AlignHCenter
+            text: rSlider.value
         }
         Slider{
+            Layout.alignment: Qt.AlignHCenter
             id: rSlider
             value: obs.brushR
             orientation: Qt.Vertical
             // minimumValue: 1
             // maximumValue: 100
             from: 1
-            to: {Math.floor(obs.gSize/2)-1}
+            to: {
+                Math.floor(obs.gSize/2)-1
+            }
             stepSize: 1
             onValueChanged: {
                 obs.brushR = value

@@ -290,10 +290,8 @@ end
 
         function setSpins!(g::IsingGraph{Float32}, idxs , brush, clamp = false)
             if !clamp
-                println("Here")
                 setNormal!(g,idxs,brush)
             else
-                println("Or Here")
                 setClamp!(g,idxs,brush)
             end
         end
@@ -353,18 +351,18 @@ function setGHFunc!(sim)
     if !g.d.weighted
         if !g.d.mactive
             g.d.hFuncRef = Ref(HFunc)
-            println("Set HFunc")
+            println("Set unweighted Hamiltonian")
         else
             g.d.hFuncRef = Ref(HMagFunc)
-            println("Set HMagFunc")
+            println("Set unweighted Hamiltonian with Magnetic Field")
         end
     else
         if !g.d.mactive
             g.d.hFuncRef = Ref(HWeightedFunc)
-            println("Set HWeightedFunc")
+            println("Set Weighted Hamiltonian")
         else
             g.d.hFuncRef = Ref(HWMagFunc)
-            println("Set HWMagFunc")
+            println("Set Weighted Hamiltonian with Magnetic Field")
         end
     end
 
